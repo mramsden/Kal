@@ -73,6 +73,15 @@ extern const CGSize kTileSize;
     return nil;
 }
 
+- (UIImage *)backgroundImageForSelectedTileAtDate:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(backgroundImageForTileSelectedAtDate:)]) {
+        return [[KalViewController appearanceDelegate] backgroundImageForTileSelectedAtDate:[kalDate NSDate]];
+    }
+    
+    return nil;
+}
+
 - (UIColor *)colorForTextInAdjacentMonth
 {
     if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextInAdjacentMonth)]) {
@@ -160,7 +169,11 @@ extern const CGSize kTileSize;
   
   UIImage *backgroundImage = nil;
   if ([self isToday] && self.selected) {
-    [[[UIImage imageNamed:[self pathForTileTodaySelected]] stretchableImageWithLeftCapWidth:6 topCapHeight:0] drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
+    backgroundImage = [self backgroundImageForSelectedTileAtDate:self.date];
+    if (nil == backgroundImage) {
+      backgroundImage = [[UIImage imageNamed:[self pathForTileTodaySelected]] stretchableImageWithLeftCapWidth:6 topCapHeight:0];
+    }
+    [backgroundImage drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
       textColor = [self colorForTextSelected:self.date];
     shadowColor = [self colorForTextShadowSelected:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_today.png"];
@@ -170,17 +183,21 @@ extern const CGSize kTileSize;
         NSString *pathForTile = [self pathForTileToday];
         backgroundImage = [[UIImage imageNamed:pathForTile] stretchableImageWithLeftCapWidth:6 topCapHeight:0];
     }
-    [backgroundImage drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
-    textColor = [self colorForTextToday:self.date];
+    [backgroundImage drawInRect:CGRectMake(1, 00, kTileSize.width-1, kTileSize.height-1)];
+      textColor = [self colorForTextToday:self.date];
     shadowColor = [self colorForTextShadowToday:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_today.png"];
   } else if (self.selected) {
-    [[[UIImage imageNamed:[self pathForTileSelected:self.date]] stretchableImageWithLeftCapWidth:1 topCapHeight:0] drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
+    backgroundImage = [self backgroundImageForSelectedTileAtDate:self.date];
+    if (nil == backgroundImage) {
+      backgroundImage = [[UIImage imageNamed:[self pathForTileTodaySelected]] stretchableImageWithLeftCapWidth:6 topCapHeight:0];
+    }
+    [backgroundImage drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
       textColor = [self colorForTextSelected:self.date];
     shadowColor = [self colorForTextShadowSelected:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_selected.png"];
   } else if (self.belongsToAdjacentMonth) {
-    textColor = [self colorForTextInAdjacentMonth];
+      textColor = [self colorForTextInAdjacentMonth];
     shadowColor = [self colorForTextShadowInAdjacentMonth];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_dim.png"];
   } else {
@@ -190,7 +207,7 @@ extern const CGSize kTileSize;
       backgroundImage = [[UIImage imageNamed:pathForTile] stretchableImageWithLeftCapWidth:1 topCapHeight:0];
     }
     [backgroundImage drawInRect:CGRectMake(0, -1, kTileSize.width - 1, kTileSize.height)];
-    textColor = [self colorForText:self.date];
+      textColor = [self colorForText:self.date];
     shadowColor = [self colorForTextShadow:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker.png"];
   }
