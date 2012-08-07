@@ -30,6 +30,8 @@ void mach_absolute_difference(uint64_t end, uint64_t start, struct timespec *tp)
 
 NSString *const KalDataSourceChangedNotification = @"KalDataSourceChangedNotification";
 
+static id<KalAppearanceDelegate> KalAppearanceDelegate = nil;
+
 @interface KalViewController ()
 @property (nonatomic, retain, readwrite) NSDate *initialDate;
 @property (nonatomic, retain, readwrite) NSDate *selectedDate;
@@ -39,6 +41,16 @@ NSString *const KalDataSourceChangedNotification = @"KalDataSourceChangedNotific
 @implementation KalViewController
 
 @synthesize dataSource, delegate, initialDate, selectedDate;
+
++ (id<KalAppearanceDelegate>)appearanceDelegate
+{
+    return KalAppearanceDelegate;
+}
+
++ (void)setAppearanceDelegate:(id<KalAppearanceDelegate>)appearanceDelegate
+{
+    KalAppearanceDelegate = appearanceDelegate;
+}
 
 - (id)initWithSelectedDate:(NSDate *)date
 {

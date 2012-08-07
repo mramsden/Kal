@@ -60,6 +60,7 @@
 		AA747D9E0F9514B9006C5449 /* Kal_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kal_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libKal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKal.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F87EC5D415D02FBC005D1ECF /* KalAppearanceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KalAppearanceDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +125,7 @@
 				533B286F11E2D46E00B3CC07 /* KalView.m */,
 				533B287011E2D46E00B3CC07 /* KalViewController.h */,
 				533B287111E2D46E00B3CC07 /* KalViewController.m */,
+				F87EC5D415D02FBC005D1ECF /* KalAppearanceDelegate.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";

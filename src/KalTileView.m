@@ -6,6 +6,7 @@
 #import "KalTileView.h"
 #import "KalDate.h"
 #import "KalPrivate.h"
+#import "KalViewController.h"
 
 extern const CGSize kTileSize;
 
@@ -27,6 +28,123 @@ extern const CGSize kTileSize;
   return self;
 }
 
+- (NSString *)pathForTileTodaySelected
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(pathForTodaySelected)]) {
+        return [[KalViewController appearanceDelegate] pathForTodaySelected];
+    }
+    
+    return @"Kal.bundle/kal_tile_today_selected.png";
+}
+
+- (NSString *)pathForTileToday
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(pathForToday)]) {
+        return [[KalViewController appearanceDelegate] pathForToday];
+    }
+    
+    return @"Kal.bundle/kal_tile_today.png";
+}
+
+- (NSString *)pathForTileSelected:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(pathForToday)]) {
+        return [[KalViewController appearanceDelegate] pathForTileAtDate:[kalDate NSDate]];
+    }
+    
+    return @"Kal.bundle/kal_tile_selected.png";
+}
+
+- (NSString *)pathForTile:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(pathForToday)]) {
+        return [[KalViewController appearanceDelegate] pathForTileAtDate:[kalDate NSDate]];
+    }
+    
+    return nil;
+}
+
+- (UIImage *)backgroundImageForTileAtDate:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(backgroundImageForTileAtDate:)]) {
+        return [[KalViewController appearanceDelegate] backgroundImageForTileAtDate:[kalDate NSDate]];
+    }
+    
+    return nil;
+}
+
+- (UIColor *)colorForTextInAdjacentMonth
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextInAdjacentMonth)]) {
+        return [[KalViewController appearanceDelegate] colorForTextInAdjacentMonth];
+    }
+    
+    return [UIColor colorWithPatternImage:[UIImage imageNamed:@"Kal.bundle/kal_tile_dim_text_fill.png"]];
+}
+
+- (UIColor *)colorForTextShadowInAdjacentMonth
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextShadowInAdjacentMonth)]) {
+        return [[KalViewController appearanceDelegate] colorForTextShadowInAdjacentMonth];
+    }
+    
+    return nil;
+}
+
+- (UIColor *)colorForText:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextAtDate:)]) {
+        return [[KalViewController appearanceDelegate] colorForTextAtDate:[kalDate NSDate]];
+    }
+    
+    return [UIColor colorWithPatternImage:[UIImage imageNamed:@"Kal.bundle/kal_tile_text_fill.png"]];
+}
+
+- (UIColor *)colorForTextShadow:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextShadowAtDate:)]) {
+        return [[KalViewController appearanceDelegate] colorForTextShadowAtDate:[kalDate NSDate]];
+    }
+    
+    return [UIColor whiteColor];
+}
+
+- (UIColor *)colorForTextSelected:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextSelected:)]) {
+        return [[KalViewController appearanceDelegate] colorForTextSelected:[kalDate NSDate]];
+    }
+    
+    return [UIColor whiteColor];
+}
+
+- (UIColor *)colorForTextShadowSelected:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextShadowSelected:)]) {
+        return [[KalViewController appearanceDelegate] colorForTextShadowSelected:[kalDate NSDate]];
+    }
+    
+    return [UIColor blackColor];
+}
+
+- (UIColor *)colorForTextToday:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextToday:)]) {
+        return [[KalViewController appearanceDelegate] colorForTextToday:[kalDate NSDate]];
+    }
+    
+    return [UIColor whiteColor];
+}
+
+- (UIColor *)colorForTextShadowToday:(KalDate *)kalDate
+{
+    if ([[KalViewController appearanceDelegate] respondsToSelector:@selector(colorForTextShadowToday:)]) {
+        return [[KalViewController appearanceDelegate] colorForTextShadowToday:[kalDate NSDate]];
+    }
+    
+    return [UIColor blackColor];
+}
+
 - (void)drawRect:(CGRect)rect
 {
   CGContextRef ctx = UIGraphicsGetCurrentContext();
@@ -40,28 +158,40 @@ extern const CGSize kTileSize;
   CGContextTranslateCTM(ctx, 0, kTileSize.height);
   CGContextScaleCTM(ctx, 1, -1);
   
+  UIImage *backgroundImage = nil;
   if ([self isToday] && self.selected) {
-    [[[UIImage imageNamed:@"Kal.bundle/kal_tile_today_selected.png"] stretchableImageWithLeftCapWidth:6 topCapHeight:0] drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
-    textColor = [UIColor whiteColor];
-    shadowColor = [UIColor blackColor];
+    [[[UIImage imageNamed:[self pathForTileTodaySelected]] stretchableImageWithLeftCapWidth:6 topCapHeight:0] drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
+      textColor = [self colorForTextSelected:self.date];
+    shadowColor = [self colorForTextShadowSelected:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_today.png"];
   } else if ([self isToday] && !self.selected) {
-    [[[UIImage imageNamed:@"Kal.bundle/kal_tile_today.png"] stretchableImageWithLeftCapWidth:6 topCapHeight:0] drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
-    textColor = [UIColor whiteColor];
-    shadowColor = [UIColor blackColor];
+    backgroundImage = [self backgroundImageForTileAtDate:self.date];
+    if (backgroundImage == nil) {
+        NSString *pathForTile = [self pathForTileToday];
+        backgroundImage = [[UIImage imageNamed:pathForTile] stretchableImageWithLeftCapWidth:6 topCapHeight:0];
+    }
+    [backgroundImage drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
+    textColor = [self colorForTextToday:self.date];
+    shadowColor = [self colorForTextShadowToday:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_today.png"];
   } else if (self.selected) {
-    [[[UIImage imageNamed:@"Kal.bundle/kal_tile_selected.png"] stretchableImageWithLeftCapWidth:1 topCapHeight:0] drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
-    textColor = [UIColor whiteColor];
-    shadowColor = [UIColor blackColor];
+    [[[UIImage imageNamed:[self pathForTileSelected:self.date]] stretchableImageWithLeftCapWidth:1 topCapHeight:0] drawInRect:CGRectMake(0, -1, kTileSize.width+1, kTileSize.height+1)];
+      textColor = [self colorForTextSelected:self.date];
+    shadowColor = [self colorForTextShadowSelected:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_selected.png"];
   } else if (self.belongsToAdjacentMonth) {
-    textColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Kal.bundle/kal_tile_dim_text_fill.png"]];
-    shadowColor = nil;
+    textColor = [self colorForTextInAdjacentMonth];
+    shadowColor = [self colorForTextShadowInAdjacentMonth];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker_dim.png"];
   } else {
-    textColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Kal.bundle/kal_tile_text_fill.png"]];
-    shadowColor = [UIColor whiteColor];
+    backgroundImage = [self backgroundImageForTileAtDate:self.date];
+    if (backgroundImage == nil) {
+      NSString *pathForTile = [self pathForTile:self.date];
+      backgroundImage = [[UIImage imageNamed:pathForTile] stretchableImageWithLeftCapWidth:1 topCapHeight:0];
+    }
+    [backgroundImage drawInRect:CGRectMake(0, -1, kTileSize.width - 1, kTileSize.height)];
+    textColor = [self colorForText:self.date];
+    shadowColor = [self colorForTextShadow:self.date];
     markerImage = [UIImage imageNamed:@"Kal.bundle/kal_marker.png"];
   }
   

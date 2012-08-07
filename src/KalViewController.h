@@ -6,6 +6,7 @@
 #import <UIKit/UIKit.h>
 #import "KalView.h"       // for the KalViewDelegate protocol
 #import "KalDataSource.h" // for the KalDataSourceCallbacks protocol
+#import "KalAppearanceDelegate.h"
 
 @class KalLogic, KalDate;
 
@@ -33,6 +34,9 @@
 @property (nonatomic, assign) id<UITableViewDelegate> delegate;
 @property (nonatomic, assign) id<KalDataSource> dataSource;
 @property (nonatomic, retain, readonly) NSDate *selectedDate;
+
++ (id<KalAppearanceDelegate>)appearanceDelegate;
++ (void)setAppearanceDelegate:(id<KalAppearanceDelegate>)appearanceDelegate;
 
 - (id)initWithSelectedDate:(NSDate *)selectedDate;  // designated initializer. When the calendar is first displayed to the user, the month that contains 'selectedDate' will be shown and the corresponding tile for 'selectedDate' will be automatically selected.
 - (void)reloadData;                                 // If you change the KalDataSource after the KalViewController has already been displayed to the user, you must call this method in order for the view to reflect the new data.
